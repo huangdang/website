@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Game">
-import { ref } from 'vue';
+import { ref, markRaw } from 'vue';
 import type { TabsPaneContext } from 'element-plus';
 import SevenStar from './components/SevenStar.vue';
 import DoubleColorStar from './components/DoubleColorBall.vue';
@@ -17,22 +17,22 @@ const gameTypes = ref([
   {
     label:'双色球',
     name: 'DoubleColorStar',
-    component: DoubleColorStar
+    component: markRaw(DoubleColorStar)
   },
   {
     label: '七星彩',
     name: 'SevenStar',
-    component: SevenStar
+    component: markRaw(SevenStar)
   },
   {
     label: '排列三/五',
     name: 'Plw',
-    component: Plw
+    component: markRaw(Plw)
   },
   {
     label: '计算',
     name: 'Calc',
-    component: Calc
+    component: markRaw(Calc)
   }
 ] as const satisfies readonly GameType[])
 const handleClick = (tab: TabsPaneContext, event: Event) => {

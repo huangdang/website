@@ -24,7 +24,8 @@ import { RouterView } from 'vue-router';
   height: 100%;
   .main{
     background-image: url('@/assets/images/pattern.png');
-    height: 100%;
+    // height: 100%;
+    flex: 1;
   }
 }
 </style>
