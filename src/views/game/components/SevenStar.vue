@@ -1,5 +1,8 @@
 <script setup lang="ts" name="SevenStar">
-import { ref, reactive } from 'vue'
+import axios from 'axios'
+import { ref, reactive, onMounted } from 'vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
+import type { Action } from 'element-plus'
 import {
   Search,
   BellFilled
@@ -90,10 +93,81 @@ const onSearch = () => { } // 搜索
 const onClear = () => { } // 清空
 const onSearchLog = () => { } // 搜索记录
 
-const getQry = () => { }
-const queryNum = (val: string) => {
-  console.log(val)
+onMounted(() => {
+  console.log('mounted')
+  getQry()
+})
+
+// 接口联调
+const getQry = () => {
+  // 'https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=04&provinceId=0&pageSize=30&isVerify=1&pageNo=1'
+  axios.get('/api/gateway/lottery/getHistoryPageListV1.qry?gameNo=04&provinceId=0&pageSize=30&isVerify=1&pageNo=1').then(res => {
+    console.log(res.data)
+    code.value = code.value.concat(res.data.value.list.map((item: any) => {
+      return {
+        ...item,
+        num: item.lotteryDrawResult.replaceAll(' ','')
+      }
+    }))
+    pageTotal.value = res.data.value.total
+  })
 }
+const queryNum = (val: string) => {
+  let isReg = /^\d{5,9}[s]?$/i
+  if (code.value.length == 0) {
+    ElMessage.error('请选择游戏！')
+    return false;
+  }
+  if (!isReg.test(val)) {
+    ElMessage.error('5到9的数字！')
+    return false;
+  }
+  // 缓存本地
+  if (!/[s]/ig.test(val)) {
+    // console.log('hove S')
+    searchLog.value.push(val)
+    searchLog.value = [...new Set(searchLog.value)]
+    localStorage.setItem('log',JSON.stringify(searchLog.value))
+  }
+  let inpLen;
+  let reg;
+  let res;
+  console.log(val.substring(0,5).split(''), '##########')
+  if (val.length >= 8 ) {
+    inpLen = val.substring(0,5).split('')
+    inpLen[5] = val[val.length - 3]
+    inpLen[6] = val[val.length - 2] + '' + val[val.length - 1]
+  } else {
+    inpLen = val.split('')
+  }
+  for (let i = 0; i < code.value.length; i++) {
+    code.value[i].num = code.value[i].lotteryDrawResult
+    res = code.value[i].num.split(' ')
+    allGet(inpLen,res)
+    for (let j = 0; j < inpLen.length; j++) {
+      if (inpLen[j] == res[j]) {
+        reg = new RegExp(inpLen[j])
+        res[j] = res[j].replace(reg, `<span style="color: red">${inpLen[j]}</span>`)
+      }
+    }
+    code.value[i].num = res.join('')
+  }
+}
+
+const allGet = (a, b) => {
+  if (a.join('').indexOf(b.join('')) >= 0) {
+    ElMessageBox.alert(b.join(''), '恭喜您中头奖了！', {
+      confirmButtonText: 'OK',
+      callback: (action: Action) => {
+        ElMessage({
+          type: 'info',
+          message: `action: ${action}`,
+        })
+      }
+    });
+  }
+}
+
 const removeLog = (index: number) => {
   console.log(index)
 }
@@ -190,7 +264,7 @@ const loadMore = () => { }; // 加载更多
           <template #header>
             <el-input v-model="searchVal" size="small" placeholder="输入号码,号码后面加“s”表示不缓存">
               <template #append>
-                <el-button size="small" icon="el-icon-search" @click="queryNum(searchVal)" />
+                <el-button size="small" :icon="Search" @click="queryNum(searchVal)" />
               </template>
             </el-input>
           </template>

@@ -1,39 +1,38 @@
 <script setup lang="ts" name="Game">
 import { ref } from 'vue';
 import type { TabsPaneContext } from 'element-plus';
-// import SevenStar from './components/SevenStar.vue';
-// import DoubleColorStar from './components/DoubleColorBall.vue';
-// import Plw from './components/Plw.vue';
-// import Calc from './components/Calc.vue';
-// const refSevenStar = ref(SevenStar)
+import SevenStar from './components/SevenStar.vue';
+import DoubleColorStar from './components/DoubleColorBall.vue';
+import Plw from './components/Plw.vue';
+import Calc from './components/Calc.vue';
 
 const activeName = ref<string>('DoubleColorStar')
 
 interface GameType {
   label: string;
-  name: string; 
+  name: string;
+  component: any;
 }
 const gameTypes = ref([
   {
     label:'双色球',
     name: 'DoubleColorStar',
-    // component: ref(DoubleColorStar)
-
+    component: DoubleColorStar
   },
   {
     label: '七星彩',
-    name: 'SevenStar'
-    // component: ref(SevenStar)
+    name: 'SevenStar',
+    component: SevenStar
   },
   {
     label: '排列三/五',
     name: 'Plw',
-    // component: ref(Plw)
+    component: Plw
   },
   {
     label: '计算',
     name: 'Calc',
-    // component: ref(Calc)
+    component: Calc
   }
 ] as const satisfies readonly GameType[])
 const handleClick = (tab: TabsPaneContext, event: Event) => {
@@ -52,9 +51,11 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
         :key="index"
         :label="tab.label"
         :name="tab.name">
-        <component
-          :is="SevenStar"
-        />
+        <div class="tab-content">
+          <component
+            :is="tab.component"
+          />
+        </div>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -66,8 +67,6 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
   margin: 20px auto 20px;
   padding: 10px 10px 0;
   box-sizing: border-box;
-  background: rgb(255, 255, 255, .1);
-  backdrop-filter: blur(8px);
   height: 100%;
 }
 </style>

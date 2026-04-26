@@ -22,8 +22,9 @@ export default defineConfig({
     host: true,
     proxy: {
       '/api': {
-        target: 'http://180.184.42.80:8101/',
+        // target: 'http://180.184.42.80:8101/',
         // target: 'https://app-ding.digitalhainan.com.cn:10838/', // 生产
+        target: 'https://webapi.sporttery.cn',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
