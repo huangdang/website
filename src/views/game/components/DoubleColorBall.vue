@@ -12,14 +12,13 @@ onMounted(() => {
   }
   initData()
 })
-watch(() => gameNo.value, () => {
-  // gameNo.value = val as string
-  //   if (val === '1') {
-  //     this.getSsq()
-  //   } else if (val === '2') {
-  //     this.dlt()
-  //   }
-  // }
+watch(() => gameNo.value, (val) => {
+  gameNo.value = val as string
+  if (val === '1') {
+    getSsq()
+  } else if (val === '2') {
+    dlt()
+  }
 })
 const initData = () => {
   getSsq()
@@ -39,7 +38,7 @@ const getSsq = () => {
     })
 }
 const dlt = () => {
-  axios.get(`https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=85&provinceId=0&pageSize=100&isVerify=1&pageNo=1`).then(res => {
+  axios.get(`/api/gateway/lottery/getHistoryPageListV1.qry?gameNo=85&provinceId=0&pageSize=100&isVerify=1&pageNo=1`).then(res => {
     if (res.data.success) {
       result.value = res.data.value.list.map((item:any) => ({
         ...item,
