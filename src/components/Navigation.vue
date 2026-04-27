@@ -67,6 +67,7 @@
       a{
         color: #fff;
         font-size: 16px;
+        text-decoration: none;
         &:hover{
           color: #1890ff;
         }

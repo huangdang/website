@@ -15,7 +15,7 @@ interface GameType {
 }
 const gameTypes = ref([
   {
-    label:'双色球',
+    label:'双色球/大乐透',
     name: 'DoubleColorStar',
     component: markRaw(DoubleColorStar)
   },

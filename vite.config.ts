@@ -27,7 +27,12 @@ export default defineConfig({
         target: 'https://webapi.sporttery.cn',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
+      },
+      '/double-color-ball': {
+        target: 'https://www.cwl.gov.cn',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/double-color-ball/, '')
       }
     }
-  },
+  }
 })

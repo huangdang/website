@@ -9,7 +9,7 @@ import {
 } from '@element-plus/icons-vue'
 const startTerm = ref<string>('') // 开始期号
 const endTerm = ref<string>('') // 结束期号
-const gameNo = ref<string>('') // 游戏
+const gameNo = ref<string>('04') // 游戏
 const pageSize = ref<number>(10) // 条数
 const searchLog = ref([]) // 搜索记录
 const searchVal = ref<string>('') // 搜索记录
@@ -101,7 +101,7 @@ onMounted(() => {
 // 接口联调
 const getQry = () => {
   // 'https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=04&provinceId=0&pageSize=30&isVerify=1&pageNo=1'
-  axios.get('/api/gateway/lottery/getHistoryPageListV1.qry?gameNo=04&provinceId=0&pageSize=30&isVerify=1&pageNo=1').then(res => {
+  axios.get(`/api/gateway/lottery/getHistoryPageListV1.qry?gameNo=${gameNo.value}&provinceId=0&pageSize=30&isVerify=1&pageNo=1`).then(res => {
     console.log(res.data)
     code.value = code.value.concat(res.data.value.list.map((item: any) => {
       return {
@@ -179,7 +179,22 @@ const onNext = (e: any, cur: number, key: number) => {
 }
 const handleSizeChange = (val: number) => { }
 const handleCurrentChange = (val: number) => { }
-const handleView = (row: any) => { } // 表格查看
+
+// 表格查看
+const handleView = (row: any) => {
+  const newWindow = window.open('about:blank', '_blank')
+  // 设置新窗口标题
+  newWindow.document.title = '正在跳转...'
+  newWindow.document.write('加载中...')
+  try {
+    // 异步请求返回后填充 URL
+    newWindow.location.href = row.drawPdfUrl
+    newWindow.focus()
+  } catch (error) {
+    newWindow.close()
+    alert('打开新窗口失败')
+  }
+}
 const loadMore = () => { }; // 加载更多
 </script>
 <template>
@@ -193,8 +208,8 @@ const loadMore = () => { }; // 加载更多
       </el-col>
       <el-col :lg="6" :sm="12" :xs="12">
         <el-select v-model="gameNo" class="_sel" placeholder="请选择游戏" style="width: 100%">
-          <el-option label="排列五" value="350133" />
           <el-option label="七星彩" value="04" />
+          <el-option label="排列五" value="350133" />
           <el-option label="大乐透" value="85" />
         </el-select>
       </el-col>
