@@ -22,7 +22,31 @@ const router = createRouter({
           path: 'game',
           name: 'Game',
           component: () => import('@/views/game/index.vue'),
-        }
+        },
+        // 我的博客
+        {
+          path: 'blog',
+          name: 'Blog',
+          component: () => import('@/views/blog/index.vue'),
+          meta: {
+            title: '我的博客',
+            keepAlive: false,
+            requireAuth: false,
+            transitionName: 'fade'
+          }
+        },
+        // 项目管理
+        {
+          path: 'project',
+          name: 'Project',
+          component: () => import('@/views/project/index.vue'),
+          meta: {
+            title: '项目管理',
+            keepAlive: false,
+            requireAuth: false,
+            transitionName: 'fade'
+          }
+        },
       ]
     },
     {

@@ -15,17 +15,17 @@ import { RouterView } from 'vue-router';
 <style lang="scss" scoped>
 .universal{
   width: 100%;
-  // height: 100%;
   min-height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  // flex: 1;
-  height: 100%;
+  background-image: url('@/assets/images/pattern.png');
   .main{
-    background-image: url('@/assets/images/pattern.png');
-    // height: 100%;
+    // background-image: url('@/assets/images/pattern.png');
     flex: 1;
+    max-width: 1400px;
+    width: 100%;
+    margin: 20px auto;
   }
 }
 </style>

@@ -99,9 +99,14 @@ onMounted(() => {
 })
 
 // 接口联调
-const getQry = () => {
+const gameNoType = ref<string>('')
+const getQry = (num: string = '1') => {
+  if (gameNoType.value !== gameNo.value) {
+    code.value = []
+    gameNoType.value = gameNo.value
+  }
   // 'https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=04&provinceId=0&pageSize=30&isVerify=1&pageNo=1'
-  axios.get(`/api/gateway/lottery/getHistoryPageListV1.qry?gameNo=${gameNo.value}&provinceId=0&pageSize=30&isVerify=1&pageNo=1`).then(res => {
+  axios.get(`/api/gateway/lottery/getHistoryPageListV1.qry?gameNo=${gameNo.value}&provinceId=0&pageSize=30&isVerify=1&pageNo=${num}`).then(res => {
     console.log(res.data)
     code.value = code.value.concat(res.data.value.list.map((item: any) => {
       return {
@@ -195,7 +200,10 @@ const handleView = (row: any) => {
     alert('打开新窗口失败')
   }
 }
-const loadMore = () => { }; // 加载更多
+// 加载更多
+const loadMore = () => {
+  getQry(String(++currentPage.value))
+};
 </script>
 <template>
   <div class="center">

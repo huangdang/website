@@ -48,7 +48,7 @@ const dlt = () => {
         before: item.lotteryDrawResult.split(' ').splice(0, 5),
         after: item.lotteryDrawResult.split(' ').splice(5),
         zjCode: ''
-      }))
+      })) || []
     }
   })
 }

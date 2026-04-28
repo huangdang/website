@@ -20,7 +20,7 @@ const gameTypes = ref([
     component: markRaw(DoubleColorStar)
   },
   {
-    label: '七星彩',
+    label: '七星彩/排列三/五',
     name: 'SevenStar',
     component: markRaw(SevenStar)
   },

@@ -57,7 +57,7 @@
   flex: 0 0 56px;
   &_cont{
     height: 100%;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     width: 100%;
     display: flex;
