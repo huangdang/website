@@ -95,12 +95,13 @@ const onSearchLog = () => { } // 搜索记录
 
 onMounted(() => {
   console.log('mounted')
-  getQry()
+  getQry('1')
 })
 
 // 接口联调
 const gameNoType = ref<string>('')
-const getQry = (num: string = '1') => {
+const getQry = (num: string) => {
+  console.log(num)
   if (gameNoType.value !== gameNo.value) {
     code.value = []
     gameNoType.value = gameNo.value
@@ -202,7 +203,7 @@ const handleView = (row: any) => {
 }
 // 加载更多
 const loadMore = () => {
-  getQry(String(++currentPage.value))
+  getQry(String(currentPage.value++))
 };
 </script>
 <template>
@@ -228,7 +229,7 @@ const loadMore = () => {
           placeholder="请输入数量"
         >
           <template #append>
-            <el-button type="primary" :icon="Search" @click="getQry" />
+            <el-button type="primary" :icon="Search" @click="getQry('1')" />
           </template>
         </el-input>
       </el-col>
