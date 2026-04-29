@@ -101,20 +101,16 @@ onMounted(() => {
 // 接口联调
 const gameNoType = ref<string>('')
 const getQry = (num: string) => {
-  console.log(num)
   if (gameNoType.value !== gameNo.value) {
     code.value = []
     gameNoType.value = gameNo.value
   }
-  // 'https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=04&provinceId=0&pageSize=30&isVerify=1&pageNo=1'
   axios.get(`/api/gateway/lottery/getHistoryPageListV1.qry?gameNo=${gameNo.value}&provinceId=0&pageSize=30&isVerify=1&pageNo=${num}`).then(res => {
-    console.log(res.data)
-    code.value = code.value.concat(res.data.value.list.map((item: any) => {
-      return {
+    const data:any = res.data.value.list.map((item: any) => ({
         ...item,
         num: item.lotteryDrawResult.replaceAll(' ','')
-      }
     }))
+    code.value = code.value.concat(data)
     pageTotal.value = res.data.value.total
   })
 }
@@ -135,9 +131,9 @@ const queryNum = (val: string) => {
     searchLog.value = [...new Set(searchLog.value)]
     localStorage.setItem('log',JSON.stringify(searchLog.value))
   }
-  let inpLen;
-  let reg;
-  let res;
+  let inpLen: number[] | string[] = [];
+  let reg: RegExp;
+  let res: string[];
   console.log(val.substring(0,5).split(''), '##########')
   if (val.length >= 8 ) {
     inpLen = val.substring(0,5).split('')
@@ -160,7 +156,7 @@ const queryNum = (val: string) => {
   }
 }
 
-const allGet = (a, b) => {
+const allGet = (a: string[], b: string[]) => {
   if (a.join('').indexOf(b.join('')) >= 0) {
     ElMessageBox.alert(b.join(''), '恭喜您中头奖了！', {
       confirmButtonText: 'OK',
@@ -188,10 +184,10 @@ const handleCurrentChange = (val: number) => { }
 
 // 表格查看
 const handleView = (row: any) => {
-  const newWindow = window.open('about:blank', '_blank')
+  const newWindow = window.open('about:blank', '_blank') as any
   // 设置新窗口标题
-  newWindow.document.title = '正在跳转...'
-  newWindow.document.write('加载中...')
+  newWindow.document.title = '正在跳转...' as string
+  newWindow?.document.write('加载中...')
   try {
     // 异步请求返回后填充 URL
     newWindow.location.href = row.drawPdfUrl
@@ -203,7 +199,7 @@ const handleView = (row: any) => {
 }
 // 加载更多
 const loadMore = () => {
-  getQry(String(currentPage.value++))
+  getQry(String(++currentPage.value))
 };
 </script>
 <template>
@@ -219,7 +215,7 @@ const loadMore = () => {
         <el-select v-model="gameNo" class="_sel" placeholder="请选择游戏" style="width: 100%">
           <el-option label="七星彩" value="04" />
           <el-option label="排列五" value="350133" />
-          <el-option label="大乐透" value="85" />
+          <!-- <el-option label="大乐透" value="85" /> -->
         </el-select>
       </el-col>
       <el-col :lg="6" :sm="12" :xs="12">
