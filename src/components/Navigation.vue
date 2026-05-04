@@ -39,7 +39,7 @@
       </span>
       <span>
         <router-link to="/blog">
-          博客
+          日志
         </router-link>
       </span>
     </div>
