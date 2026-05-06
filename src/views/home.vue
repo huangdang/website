@@ -961,6 +961,13 @@ onMounted(() => {
     <span id="pp_final_vsh" class="dis-none" :data-gl="sak.t7" />
     <span id="pp_final_fsh" class="dis-none" :data-gl="sak.t8" />
   </div>
+  <div class="text" @click="$router.push('/blog')">
+    <p>不闻不若闻之</p>
+    <p>闻之不若见之</p>
+    <p>见之不若知之</p>
+    <p>知之不若行之</p>
+    <p>学至于行之而止矣</p>
+  </div>
 </template>
 <style lang="scss" scoped>
 .nav-top{
@@ -973,6 +980,20 @@ body {
   overflow: hidden;
   height: 600px;
   font: 12px/180% Arial, Helvetica, sans-serif, "新宋体";
+}
+
+.text{
+  text-align: center;
+  font-size: 32px;
+  line-height: 32px;
+  letter-spacing: 10px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  color: #fff;
+  cursor: pointer;
 }
 
 canvas {

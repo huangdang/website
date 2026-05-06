@@ -4,11 +4,13 @@
   <div>
     <h2>日志</h2>
     <div v-for="log in 3" :key="log" class="log-list">
-      <div class="log-list-line"></div>
+      <div class="log-list-line">
+        <span class="tip"></span>
+      </div>
       <div class="log-list-content">
         <div class="log-list-date">2023-04-01</div>
         <div class="log-list-info">
-          <span class="tip"></span>
+          <!-- <span class="tip"></span> -->
           <div class="log-list-info-title">修复七星组件中的类型和逻辑问题</div>
           <div class="log-list-info-content">修复七星组件中的类型和逻辑问题
           移除多余的调试日志输出，优化控制台打印信息，统一请求参数gameNo使用gameNo.value确保一致性，
@@ -28,39 +30,40 @@
   display: flex;
   &-line {
     width: 4px;
-    background-color: #ccc;
-    margin-right: 16px;
+    background-color: #324057;
+    margin-right: 32px;
+    position: relative;
+    .tip {
+      position: absolute;
+      top: 11px;
+      left: 4px;
+      border: 8px solid transparent;
+      border-left-color: #324057;
+      width: 0;
+      height: 0;
+      display: inline-block;
+    }
   }
   &-content {
     flex: 1;
     display: flex;
     flex-direction: column;
     position: relative;
-    margin: 0 0 16px;
+    margin: 10px 0 16px;
     .log-list-date {
-      font-size: 14px;
+      font-size: 16px;
       color: #666;
       margin-bottom: 8px;
     }
     .log-list-info {
       display: flex;
       flex-direction: column;
-      padding: 8px;
+      padding: 15px;
       background: #fff;
-      border: 1px solid #ccc;
+      border: 1px solid #324057;
       border-radius: 4px;
-      border-top-left-radius: 0;
       position: relative;
-      .tip {
-        position: absolute;
-        top: 0;
-        left: -16px;
-        border: 8px solid transparent;
-        border-right-color: #ccc;
-        width: 0;
-        height: 0;
-        display: inline-block;
-      }
+      letter-spacing: 1px;
       .log-list-info-title {
         font-size: 16px;
         font-weight: bold;
@@ -68,7 +71,7 @@
         color: #333;
       }
       .log-list-info-content {
-        font-size: 14px;
+        font-size: 16px;
         color: #666;
         text-indent: 2em;
         line-height: 1.8;
