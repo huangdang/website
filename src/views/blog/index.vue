@@ -35,7 +35,7 @@
     position: relative;
     .tip {
       position: absolute;
-      top: 11px;
+      top: 60px;
       left: 4px;
       border: 8px solid transparent;
       border-left-color: #324057;
@@ -53,15 +53,16 @@
     .log-list-date {
       font-size: 16px;
       color: #666;
-      margin-bottom: 8px;
+      // margin-bottom: 8px;
+      padding-left: 15px;
     }
     .log-list-info {
       display: flex;
       flex-direction: column;
       padding: 15px;
       background: #fff;
-      border: 1px solid #324057;
-      border-radius: 4px;
+      border-bottom: 1px solid #ccc;
+      // border-radius: 4px;
       position: relative;
       letter-spacing: 1px;
       .log-list-info-title {
