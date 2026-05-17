@@ -7,6 +7,10 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // 打包文件名
+  build: {
+    outDir: 'website'
+  },
   plugins: [
     vue(),
     vueJsx(),
@@ -21,17 +25,17 @@ export default defineConfig({
     port: 5200,
     host: true,
     proxy: {
-      '/api': {
+      '/seven': {
         // target: 'http://180.184.42.80:8101/',
         // target: 'https://app-ding.digitalhainan.com.cn:10838/', // 生产
         target: 'https://webapi.sporttery.cn',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
+        rewrite: (path) => path.replace(/^\/seven/, '')
       },
-      '/double-color-ball': {
+      '/double': {
         target: 'https://www.cwl.gov.cn',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/double-color-ball/, '')
+        rewrite: (path) => path.replace(/^\/double/, '')
       }
     }
   }

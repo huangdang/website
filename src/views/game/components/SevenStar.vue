@@ -105,7 +105,7 @@ const getQry = (num: string) => {
     code.value = []
     gameNoType.value = gameNo.value
   }
-  axios.get(`/api/gateway/lottery/getHistoryPageListV1.qry?gameNo=${gameNo.value}&provinceId=0&pageSize=30&isVerify=1&pageNo=${num}`).then(res => {
+  axios.get(`https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=${gameNo.value}&provinceId=0&pageSize=30&isVerify=1&pageNo=${num}`).then(res => {
     const data:any = res.data.value.list.map((item: any) => ({
         ...item,
         num: item.lotteryDrawResult.replaceAll(' ','')

@@ -26,7 +26,7 @@ const initData = () => {
 const getSsq = () => {
    axios({
       method: 'get',
-      url: '/double-color-ball/cwl_admin/front/cwlkj/search/kjxx/findDrawNotice?name=ssq&issueCount=&issueStart=&issueEnd=&dayStart=&dayEnd=&pageNo=1&pageSize=30&week=&systemType=PC'
+      url: '/double/cwl_admin/front/cwlkj/search/kjxx/findDrawNotice?name=ssq&issueCount=&issueStart=&issueEnd=&dayStart=&dayEnd=&pageNo=1&pageSize=30&week=&systemType=PC'
     }).then(res => {
       result.value = res.data.result.map((item:any) => ({
         ...item,
@@ -38,7 +38,7 @@ const getSsq = () => {
     })
 }
 const dlt = () => {
-  axios.get(`/api/gateway/lottery/getHistoryPageListV1.qry?gameNo=85&provinceId=0&pageSize=100&isVerify=1&pageNo=1`).then(res => {
+  axios.get(`https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=85&provinceId=0&pageSize=100&isVerify=1&pageNo=1`).then(res => {
     if (res.data.success) {
       result.value = res.data.value.list.map((item:any) => ({
         ...item,
