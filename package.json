@@ -13,6 +13,7 @@
     "lib": "vue-cli-service build --report --target lib --dest dist/lib --name VFormDesigner install.js"
   },
   "dependencies": {
+    "@open-file-viewer/core": "^0.1.15",
     "axios": "^1.13.6",
     "element-plus": "^2.13.3",
     "pinia": "^3.0.4",

@@ -1,8 +1,27 @@
 <script setup lang="ts" name="index">
+// import tableList from './components/tableList.vue'
+// const logClick = () => {
+//   console.log('logClick')
+// }
+
 </script>
 <template>
   <div>
-    <h2>日志</h2>
+    <h2>日志
+      <!-- <template shadowrootmode="open">
+        <style>
+          .price {
+            font-weight: bold;
+            font-size: 20px;
+          }
+        </style>
+
+        <slot name="price"></slot>
+      </template>
+      <span slot="price">19.99</span> -->
+    </h2>
+    
+    <!-- <table-list @click="logClick" /> -->
     <div v-for="log in 3" :key="log" class="log-list">
       <div class="log-list-line">
         <span class="tip"></span>

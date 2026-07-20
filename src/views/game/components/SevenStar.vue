@@ -105,7 +105,7 @@ const getQry = (num: string) => {
     code.value = []
     gameNoType.value = gameNo.value
   }
-  axios.get(`https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=${gameNo.value}&provinceId=0&pageSize=30&isVerify=1&pageNo=${num}`).then(res => {
+  axios.get(`https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=${gameNo.value}&provinceId=0&pageSize=${pageSize.value}&isVerify=1&pageNo=${num}`).then(res => {
     const data:any = res.data.value.list.map((item: any) => ({
         ...item,
         num: item.lotteryDrawResult.replaceAll(' ','')
@@ -137,14 +137,14 @@ const queryNum = (val: string) => {
   console.log(val.substring(0,5).split(''), '##########')
   if (val.length >= 8 ) {
     inpLen = val.substring(0,5).split('')
-    inpLen[5] = val[val.length - 3]
+    inpLen[5] = val[val.length - 3] as string
     inpLen[6] = val[val.length - 2] + '' + val[val.length - 1]
   } else {
     inpLen = val.split('')
   }
   for (let i = 0; i < code.value.length; i++) {
-    code.value[i].num = code.value[i].lotteryDrawResult
-    res = code.value[i].num.split(' ')
+    code.value[i].num = code.value[i]?.lotteryDrawResult as string | undefined || ''
+    res = code.value[i]?.num?.split(' ') as string[]
     allGet(inpLen,res)
     for (let j = 0; j < inpLen.length; j++) {
       if (inpLen[j] == res[j]) {

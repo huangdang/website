@@ -2,10 +2,14 @@
 import Navigation from '@/components/Navigation.vue';
 import Footer from '@/components/Footer.vue';
 import { RouterView } from 'vue-router';
+const clickTop = (data: { name: string, age: number }) => {
+  console.log('clickTop', data)
+}
+
 </script>
 <template>
   <div class="universal">
-    <Navigation />
+    <Navigation @click-top="clickTop" />
     <div class="main">
       <RouterView />
     </div>
