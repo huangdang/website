@@ -1,11 +1,15 @@
 <script setup lang="ts" name="index">
+import { useRouter } from 'vue-router'
 import { ref } from 'vue'
+
+const router = useRouter()
 const projects = ref([
-  { id: 1, name: '项目1', description: '这是项目1' },
-  { id: 2, name: '项目2', description: '这是项目2' },
-  { id: 3, name: '项目3', description: '这是项目3' },
-  { id: 4, name: '项目4', description: '这是项目4' }
+  { id: 1, name: 'todolist', description: '一个简单的待办事项列表', link: 'Detail' },
 ])
+const jumpToDetail = (link: string) => {
+  console.log(link)
+  router.push({ name: link })
+}
 </script>
 <template>
   <div>
@@ -13,6 +17,7 @@ const projects = ref([
     <div v-for="project in projects" :key="project?.id">
       <h3>{{ project?.name }}</h3>
       <p>{{ project?.description }}</p>
+      <a href="javascript:void(0)" @click="jumpToDetail(project?.link)">查看详情</a>
     </div>
   </div>
 </template>

@@ -38,14 +38,28 @@ const router = createRouter({
         // 项目管理
         {
           path: 'project',
-          name: 'Project',
-          component: () => import('@/views/project/index.vue'),
+          // name: 'Project',
+          // component: () => import('@/views/project/index.vue'),
           meta: {
             title: '项目管理',
             keepAlive: false,
             requireAuth: false,
             transitionName: 'fade'
-          }
+          },
+          children: [
+            {
+              path: '',
+              name: 'ProjectList',
+              component: () => import('@/views/project/index.vue'),
+              meta: { title: '项目列表', keepAlive: false, requireAuth: false, transitionName: 'fade' }
+            },
+            { 
+              path: 'detail',
+              name: 'Detail',
+              component: () => import('@/views/project/detail.vue'), 
+              meta: { title: '项目详情', keepAlive: false, requireAuth: false, transitionName: 'fade' } 
+            },
+          ]
         },
       ]
     },
