@@ -1,5 +1,5 @@
 <script setup lang="ts" name="todolist">
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 
 interface TodoItem {
   id: number
@@ -12,13 +12,14 @@ type FilterType = 'all' | 'active' | 'completed'
 const inputText = ref('')
 const filter = ref<FilterType>('all')
 const todos = ref<TodoItem[]>([
-  { id: 1, text: '4号 中信银行', done: true },
-  { id: 2, text: '7号 金条', done: false },
-  { id: 3, text: '13号 微粒贷', done: false },
-  { id: 4, text: '13号 交通银行惠民贷', done: false },
-  { id: 5, text: '14号 借呗', done: false },
-  { id: 6, text: '24号 招商银行', done: false },
-  { id: 7, text: '30号 金条', done: false }
+  { id: 1, text: '4号 中信银行 1999.41', done: false },
+  { id: 2, text: '7号 金条 821.98 + 43.26', done: false },
+  { id: 3, text: '10号 小鹏汽车 2974.31', done: false },
+  { id: 4, text: '13号 微粒贷 1280.94', done: false },
+  { id: 5, text: '13号 交通银行惠民贷 367.41 + 369.19 + 1752.71', done: false },
+  { id: 6, text: '14号 借呗 7640.74', done: false },
+  { id: 7, text: '24号 招商银行 5437.91 + 1723.06', done: false },
+  { id: 8, text: '30号 金条 1396.25 + 13202', done: false }
 ])
 
 // 过滤后的列表
@@ -63,6 +64,41 @@ const removeTodo = (id: number) => {
   todos.value = todos.value.filter((item) => item.id !== id)
 }
 
+// 正在编辑的待办 id 及其临时文本
+const editingId = ref<number | null>(null)
+const editingText = ref('')
+const editInputRef = ref<HTMLInputElement>()
+
+// 开始编辑（仅未完成事项可编辑）
+const startEdit = (item: TodoItem) => {
+  if (item.done) return
+  editingId.value = item.id
+  editingText.value = item.text
+  nextTick(() => {
+    editInputRef.value?.focus()
+  })
+}
+
+// 保存编辑
+const saveEdit = (item: TodoItem) => {
+  if (editingId.value !== item.id) return
+  const text = editingText.value.trim()
+  if (text) {
+    item.text = text
+    editingId.value = null
+  } else {
+    // 内容为空则删除该待办
+    removeTodo(item.id)
+    editingId.value = null
+  }
+}
+
+// 取消编辑
+const cancelEdit = () => {
+  editingId.value = null
+  editingText.value = ''
+}
+
 // 清除已完成
 const clearCompleted = () => {
   todos.value = todos.value.filter((item) => !item.done)
@@ -100,15 +136,43 @@ const clearCompleted = () => {
         :class="{ 'is-done': item.done }"
       >
         <el-checkbox v-model="item.done" />
-        <span class="todolist-item-text">{{ item.text }}</span>
-        <el-button
-          class="todolist-item-delete"
-          type="danger"
-          link
-          @click="removeTodo(item.id)"
-        >
-          删除
-        </el-button>
+        <template v-if="editingId === item.id">
+          <el-input
+            ref="editInputRef"
+            v-model="editingText"
+            class="todolist-item-input"
+            size="small"
+            @keyup.enter="saveEdit(item)"
+            @keyup.esc="cancelEdit"
+            @blur="saveEdit(item)"
+          />
+          <el-button type="primary" link @click="saveEdit(item)">保存</el-button>
+          <el-button type="info" link @click="cancelEdit">取消</el-button>
+        </template>
+        <template v-else>
+          <span
+            class="todolist-item-text"
+            :class="{ 'is-editable': !item.done }"
+            @dblclick="startEdit(item)"
+          >{{ item.text }}</span>
+          <el-button
+            v-if="!item.done"
+            class="todolist-item-edit"
+            type="primary"
+            link
+            @click="startEdit(item)"
+          >
+            编辑
+          </el-button>
+          <el-button
+            class="todolist-item-delete"
+            type="danger"
+            link
+            @click="removeTodo(item.id)"
+          >
+            删除
+          </el-button>
+        </template>
       </li>
       <li v-if="filteredTodos.length === 0" class="todolist-empty">暂无待办事项</li>
     </ul>
@@ -167,8 +231,20 @@ const clearCompleted = () => {
       font-size: 15px;
       color: #333;
       word-break: break-all;
+
+      &.is-editable {
+        cursor: text;
+      }
     }
 
+    &-input {
+      flex: 1;
+      margin: 0 12px;
+      font-size: 15px;
+      color: #333;
+    }
+
+    &-edit,
     &-delete {
       flex-shrink: 0;
     }
