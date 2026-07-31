@@ -4,6 +4,7 @@ import { computed, nextTick, ref } from 'vue'
 interface TodoItem {
   id: number
   text: string
+  price: number[]
   done: boolean
 }
 
@@ -12,14 +13,16 @@ type FilterType = 'all' | 'active' | 'completed'
 const inputText = ref('')
 const filter = ref<FilterType>('all')
 const todos = ref<TodoItem[]>([
-  { id: 1, text: '4号 中信银行 1999.41', done: false },
-  { id: 2, text: '7号 金条 821.98 + 43.26', done: false },
-  { id: 3, text: '10号 小鹏汽车 2974.31', done: false },
-  { id: 4, text: '13号 微粒贷 1280.94', done: false },
-  { id: 5, text: '13号 交通银行惠民贷 367.41 + 369.19 + 1752.71', done: false },
-  { id: 6, text: '14号 借呗 7640.74', done: false },
-  { id: 7, text: '24号 招商银行 5437.91 + 1723.06', done: false },
-  { id: 8, text: '30号 金条 1396.25 + 13202', done: false }
+  { id: 1, text: '04号 中信银行', price: [1999.41], done: false },
+  { id: 2, text: '07号 金条', price: [821.98, 43.26], done: false },
+  { id: 3, text: '10号 小鹏汽车', price: [2974.31], done: false },
+  { id: 4, text: '10号 白条', price: [167.59], done: false },
+  { id: 5, text: '13号 微粒贷', price: [1280.94], done: false },
+  { id: 6, text: '13号 交通银行惠民贷', price: [433.80,369.19,1752.71], done: false },
+  { id: 7, text: '14号 借呗', price: [7640.74], done: false },
+  { id: 8, text: '20号 花呗', price: [268.94], done: false },
+  { id: 9, text: '24号 招商银行', price: [272.30,1723.06], done: false },
+  { id: 10, text: '30号 金条', price: [14598.25], done: false }
 ])
 
 // 过滤后的列表
@@ -51,10 +54,15 @@ const allDone = computed({
 const addTodo = () => {
   const text = inputText.value.trim()
   if (!text) return
+  const reg = /\[\s*([\d\s,]+?)\s*\]/;
+  const res = text.match(reg)?.[1]?.replace(/\s/g, '').split(',').map(Number);
+
+  const match = /\[([\d,]+)\]/;
   todos.value.unshift({
     id: Date.now(),
-    text,
-    done: false
+    text: text?.replace(match, ''),
+    done: false,
+    price: res||[0]
   })
   inputText.value = ''
 }
@@ -98,6 +106,16 @@ const cancelEdit = () => {
   editingId.value = null
   editingText.value = ''
 }
+
+// 计算价格
+const itemPriceTotal = (list: number[]) => {
+  return list.reduce((acc, price) => acc + price, 0)
+}
+
+const priceTotal = computed(() => {
+  // 计算总价格 done等于true时不参与计算
+  return (todos.value.reduce((acc, item) => acc + (item.done ? 0 : itemPriceTotal(item.price)), 0)).toFixed(2)
+})
 
 // 清除已完成
 const clearCompleted = () => {
@@ -150,11 +168,15 @@ const clearCompleted = () => {
           <el-button type="info" link @click="cancelEdit">取消</el-button>
         </template>
         <template v-else>
-          <span
+          <div
             class="todolist-item-text"
             :class="{ 'is-editable': !item.done }"
             @dblclick="startEdit(item)"
-          >{{ item.text }}</span>
+          >
+            {{ item.text }}
+            <span style="color: red;">{{ itemPriceTotal(item.price) }}元</span>
+          </div>
+          
           <el-button
             v-if="!item.done"
             class="todolist-item-edit"
@@ -176,7 +198,10 @@ const clearCompleted = () => {
       </li>
       <li v-if="filteredTodos.length === 0" class="todolist-empty">暂无待办事项</li>
     </ul>
-
+    <!-- 金额总计 -->
+    <div class="todolist-footer">
+      <span>金额总计 {{ priceTotal }}元</span>
+    </div>
     <div class="todolist-footer">
       <span>剩余 {{ activeCount }} 项未完成</span>
       <el-button type="info" link @click="clearCompleted">清除已完成</el-button>
