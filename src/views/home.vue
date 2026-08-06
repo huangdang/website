@@ -268,20 +268,20 @@ void main(void) {
 }`
 });
 onMounted(() => {
-  var Vector3 = {};
-  var Matrix44 = {};
-  Vector3.create = function (x, y, z) {
+  var Vector3 = {} as any;
+  var Matrix44 = {} as any;
+  Vector3.create = function (x: number, y: number, z: number) {
     return { 'x': x, 'y': y, 'z': z };
   };
-  Vector3.dot = function (v0, v1) {
+  Vector3.dot = function (v0:any, v1:any) {
     return v0.x * v1.x + v0.y * v1.y + v0.z * v1.z;
   };
-  Vector3.cross = function (v, v0, v1) {
+  Vector3.cross = function (v:any, v0:any, v1:any) {
     v.x = v0.y * v1.z - v0.z * v1.y;
     v.y = v0.z * v1.x - v0.x * v1.z;
     v.z = v0.x * v1.y - v0.y * v1.x;
   };
-  Vector3.normalize = function (v) {
+  Vector3.normalize = function (v:any) {
     var l = v.x * v.x + v.y * v.y + v.z * v.z;
     if (l > 0.00001) {
       l = 1.0 / Math.sqrt(l);
@@ -290,7 +290,7 @@ onMounted(() => {
       v.z *= l;
     }
   };
-  Vector3.arrayForm = function (v) {
+  Vector3.arrayForm = function (v:any) {
     if (v.array) {
       v.array[0] = v.x;
       v.array[1] = v.y;
@@ -301,10 +301,10 @@ onMounted(() => {
     }
     return v.array;
   };
-  Matrix44.createIdentity = function () {
+  Matrix44.createIdentity = function ():Float32Array {
     return new Float32Array([1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]);
   };
-  Matrix44.loadProjection = function (m, aspect, vdeg, near, far) {
+  Matrix44.loadProjection = function (m:Float32Array, aspect: number, vdeg: number, near: number, far: number) {
     var h = near * Math.tan(vdeg * Math.PI / 180.0 * 0.5) * 2.0;
     var w = h * aspect;
     m[0] = 2.0 * near / w;
@@ -324,7 +324,7 @@ onMounted(() => {
     m[14] = -2.0 * far * near / (far - near);
     m[15] = 0.0;
   };
-  Matrix44.loadLookAt = function (m, vpos, vlook, vup) {
+  Matrix44.loadLookAt = function (m:Float32Array, vpos:any, vlook:any, vup:any) {
     var frontv = Vector3.create(vpos.x - vlook.x, vpos.y - vlook.y, vpos.z - vlook.z);
     Vector3.normalize(frontv);
     var sidev = Vector3.create(1.0, 0.0, 0.0);
@@ -345,9 +345,9 @@ onMounted(() => {
     m[9] = topv.z;
     m[10] = frontv.z;
     m[11] = 0.0;
-    m[12] = -(vpos.x * m[0] + vpos.y * m[4] + vpos.z * m[8]);
-    m[13] = -(vpos.x * m[1] + vpos.y * m[5] + vpos.z * m[9]);
-    m[14] = -(vpos.x * m[2] + vpos.y * m[6] + vpos.z * m[10]);
+    m[12] = -(vpos.x * (m[0] || 0) + vpos.y * (m[4] || 0) + vpos.z * (m[8] || 0));
+    m[13] = -(vpos.x * (m[1] || 0) + vpos.y * (m[5] || 0) + vpos.z * (m[9] || 0));
+    m[14] = -(vpos.x * (m[2] || 0) + vpos.y * (m[6] || 0) + vpos.z * (m[10] || 0));
     m[15] = 1.0;
   };
   //
@@ -356,7 +356,7 @@ onMounted(() => {
     'delta': 0, 'elapsed': 0 // Number(sec)
   };
   //
-  var gl;
+  var gl: WebGLRenderingContext | any;
   var renderSpec = {
     'width': 0,
     'height': 0,
@@ -366,8 +366,8 @@ onMounted(() => {
     'halfHeight': 0,
     'halfArray': new Float32Array(3)
     // and some render targets. see setViewport()
-  };
-  renderSpec.setSize = function (w, h) {
+  } as any;
+  renderSpec.setSize = function (w: number, h: number) {
     renderSpec.width = w;
     renderSpec.height = h;
     renderSpec.aspect = renderSpec.width / renderSpec.height;
@@ -380,18 +380,18 @@ onMounted(() => {
     renderSpec.halfArray[1] = renderSpec.halfHeight;
     renderSpec.halfArray[2] = renderSpec.halfWidth / renderSpec.halfHeight;
   };
-  function deleteRenderTarget(rt) {
+  function deleteRenderTarget(rt: any) {
     gl.deleteFramebuffer(rt.frameBuffer);
     gl.deleteRenderbuffer(rt.renderBuffer);
     gl.deleteTexture(rt.texture);
   }
-  function createRenderTarget(w, h) {
+  function createRenderTarget(w: number, h: number) {
     var ret = {
       'width': w,
       'height': h,
       'sizeArray': new Float32Array([w, h, w / h]),
       'dtxArray': new Float32Array([1.0 / w, 1.0 / h])
-    };
+    } as any;
     ret.frameBuffer = gl.createFramebuffer();
     ret.renderBuffer = gl.createRenderbuffer();
     ret.texture = gl.createTexture();
@@ -411,56 +411,56 @@ onMounted(() => {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     return ret;
   }
-  function compileShader(shtype, shsrc) {
+  function compileShader(shtype: number, shsrc: string) {
     var retsh = gl.createShader(shtype);
-    gl.shaderSource(retsh, shsrc);
-    gl.compileShader(retsh);
-    if (!gl.getShaderParameter(retsh, gl.COMPILE_STATUS)) {
-      var errlog = gl.getShaderInfoLog(retsh);
+    gl.shaderSource(retsh as WebGLShader, shsrc);
+    gl.compileShader(retsh as WebGLShader);
+    if (!gl.getShaderParameter(retsh as WebGLShader, gl.COMPILE_STATUS)) {
+      var errlog = gl.getShaderInfoLog(retsh as WebGLShader);
       gl.deleteShader(retsh);
       return null;
     }
     return retsh;
   }
-  function createShader(vtxsrc, frgsrc, uniformlist, attrlist) {
+  function createShader(vtxsrc: string, frgsrc: string, uniformlist: string[], attrlist: string[]) {
     var vsh = compileShader(gl.VERTEX_SHADER, vtxsrc);
     var fsh = compileShader(gl.FRAGMENT_SHADER, frgsrc);
     if (vsh == null || fsh == null) {
       return null;
     }
-    var prog = gl.createProgram();
-    gl.attachShader(prog, vsh);
-    gl.attachShader(prog, fsh);
-    gl.deleteShader(vsh);
-    gl.deleteShader(fsh);
-    gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-      var errlog = gl.getProgramInfoLog(prog);
+    var prog = gl.createProgram() as WebGLProgram as any;
+    gl.attachShader(prog as WebGLProgram, vsh as WebGLShader);
+    gl.attachShader(prog as WebGLProgram, fsh as WebGLShader);
+    gl.deleteShader(vsh as WebGLShader);
+    gl.deleteShader(fsh as WebGLShader);
+    gl.linkProgram(prog as WebGLProgram);
+    if (!gl.getProgramParameter(prog as WebGLProgram, gl.LINK_STATUS)) {
+      var errlog = gl.getProgramInfoLog(prog as WebGLProgram);
       console.error(errlog);
       return null;
     }
     if (uniformlist) {
       prog.uniforms = {};
       for (let i = 0; i < uniformlist.length; i++) {
-        prog.uniforms[uniformlist[i]] = gl.getUniformLocation(prog, uniformlist[i]);
+        prog.uniforms[uniformlist[i] as any] = gl.getUniformLocation(prog, uniformlist[i] as any );
       }
     }
     if (attrlist) {
       prog.attributes = {};
       for (let i = 0; i < attrlist.length; i++) {
-        var attr = attrlist[i];
+        var attr = attrlist[i] as any;
         prog.attributes[attr] = gl.getAttribLocation(prog, attr);
       }
     }
     return prog;
   }
-  function useShader(prog) {
+  function useShader(prog: any) {
     gl.useProgram(prog);
     for (var attr in prog.attributes) {
       gl.enableVertexAttribArray(prog.attributes[attr]);
     }
   }
-  function unuseShader(prog) {
+  function unuseShader(prog: any) {
     for (var attr in prog.attributes) {
       gl.disableVertexAttribArray(prog.attributes[attr]);
     }
@@ -478,10 +478,10 @@ onMounted(() => {
     'dof': Vector3.create(10.0, 4.0, 8.0),
     'matrix': Matrix44.createIdentity()
   };
-  var pointFlower = {};
+  var pointFlower = {} as any;
   // var meshFlower = {};
   var sceneStandBy = false;
-  var BlossomParticle = function () {
+  var BlossomParticle = function (): any {
     this.velocity = new Array(3);
     this.rotation = new Array(3);
     this.position = new Array(3);
@@ -490,30 +490,30 @@ onMounted(() => {
     this.alpha = 1.0;
     this.zkey = 0.0;
   };
-  BlossomParticle.prototype.setVelocity = function (vx, vy, vz) {
+  BlossomParticle.prototype.setVelocity = function (vx: number, vy: number, vz: number) {
     this.velocity[0] = vx;
     this.velocity[1] = vy;
     this.velocity[2] = vz;
   };
-  BlossomParticle.prototype.setRotation = function (rx, ry, rz) {
+  BlossomParticle.prototype.setRotation = function (rx: number, ry: number, rz: number) {
     this.rotation[0] = rx;
     this.rotation[1] = ry;
     this.rotation[2] = rz;
   };
-  BlossomParticle.prototype.setPosition = function (nx, ny, nz) {
+  BlossomParticle.prototype.setPosition = function (nx: number, ny: number, nz: number) {
     this.position[0] = nx;
     this.position[1] = ny;
     this.position[2] = nz;
   };
-  BlossomParticle.prototype.setEulerAngles = function (rx, ry, rz) {
+  BlossomParticle.prototype.setEulerAngles = function (rx: number, ry: number, rz: number) {
     this.euler[0] = rx;
     this.euler[1] = ry;
     this.euler[2] = rz;
   };
-  BlossomParticle.prototype.setSize = function (s) {
+  BlossomParticle.prototype.setSize = function (s: number) {
     this.size = s;
   };
-  BlossomParticle.prototype.update = function (dt) {
+  BlossomParticle.prototype.update = function (dt: number) {
     this.position[0] += this.velocity[0] * dt;
     this.position[1] += this.velocity[1] * dt;
     this.position[2] += this.velocity[2] * dt;
@@ -521,14 +521,14 @@ onMounted(() => {
     this.euler[1] += this.rotation[1] * dt;
     this.euler[2] += this.rotation[2] * dt;
   };
-  function createPointFlowers() {
+  function createPointFlowers(): void {
     // get point sizes
     var prm = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE);
     renderSpec.pointSize = { 'min': prm[0], 'max': prm[1] };
-    var vtxsrc = document.getElementById("sakura_point_vsh").getAttribute('data-gl')
-    var frgsrc = document.getElementById("sakura_point_fsh").getAttribute('data-gl')
+    var vtxsrc = document.getElementById("sakura_point_vsh")?.getAttribute('data-gl')
+    var frgsrc = document.getElementById("sakura_point_fsh")?.getAttribute('data-gl')
     pointFlower.program = createShader(
-      vtxsrc, frgsrc,
+      vtxsrc as string, frgsrc as string,
       ['uProjection', 'uModelview', 'uResolution', 'uOffset', 'uDOF', 'uFade'],
       ['aPosition', 'aEuler', 'aMisc']
     );
@@ -553,7 +553,7 @@ onMounted(() => {
       pointFlower.particles[i] = new BlossomParticle();
     }
   }
-  function initPointFlowers() {
+  function initPointFlowers(): void {
     //area
     pointFlower.area = Vector3.create(20.0, 20.0, 20.0);
     pointFlower.area.x = pointFlower.area.y * renderSpec.aspect;
@@ -596,11 +596,11 @@ onMounted(() => {
       tmpprtcl.setSize(0.9 + Math.random() * 0.1);
     }
   }
-  function renderPointFlowers() {
+  function renderPointFlowers(): void {
     //update
     var PI2 = Math.PI * 2.0;
     // var limit = [pointFlower.area.x, pointFlower.area.y, pointFlower.area.z];
-    var repeatPos = function (prt, cmp, limit) {
+    var repeatPos = function (prt: any, cmp: number, limit: number) {
       if (Math.abs(prt.position[cmp]) - prt.size * 0.5 > limit) {
         //out of area
         if (prt.position[cmp] > 0) {
@@ -611,13 +611,13 @@ onMounted(() => {
         }
       }
     };
-    var repeatEuler = function (prt, cmp) {
+    var repeatEuler = function (prt: any, cmp: number) {
       prt.euler[cmp] = prt.euler[cmp] % PI2;
       if (prt.euler[cmp] < 0.0) {
         prt.euler[cmp] += PI2;
       }
     };
-    for (var i = 0; i < pointFlower.numFlowers; i++) {
+    for (var i: number = 0; i < pointFlower.numFlowers; i++) {
       var prtcl = pointFlower.particles[i];
       prtcl.update(timeInfo.delta, timeInfo.elapsed);
       repeatPos(prtcl, 0, pointFlower.area.x);
@@ -633,12 +633,12 @@ onMounted(() => {
         + camera.matrix[14]);
     }
     // sort
-    pointFlower.particles.sort(function (p0, p1) { return p0.zkey - p1.zkey; });
+    pointFlower.particles.sort(function (p0: any, p1: any) { return p0.zkey - p1.zkey; });
     // update data
     var ipos = pointFlower.positionArrayOffset;
     var ieuler = pointFlower.eulerArrayOffset;
     var imisc = pointFlower.miscArrayOffset;
-    for (let i = 0; i < pointFlower.numFlowers; i++) {
+    for (let i: number = 0; i < pointFlower.numFlowers; i++) {
       let prtcl = pointFlower.particles[i];
       pointFlower.dataArray[ipos] = prtcl.position[0];
       pointFlower.dataArray[ipos + 1] = prtcl.position[1];
@@ -669,7 +669,7 @@ onMounted(() => {
     gl.vertexAttribPointer(prog.attributes.aEuler, 3, gl.FLOAT, false, 0, pointFlower.eulerArrayOffset * Float32Array.BYTES_PER_ELEMENT);
     gl.vertexAttribPointer(prog.attributes.aMisc, 2, gl.FLOAT, false, 0, pointFlower.miscArrayOffset * Float32Array.BYTES_PER_ELEMENT);
     // doubler
-    for (let i = 1; i < 2; i++) {
+    for (let i: number = 1; i < 2; i++) {
       var zpos = i * -2.0;
       pointFlower.offset[0] = pointFlower.area.x * -1.0;
       pointFlower.offset[1] = pointFlower.area.y * -1.0;
@@ -705,8 +705,8 @@ onMounted(() => {
   }
   // effects
   //common util
-  function createEffectProgram(vtxsrc, frgsrc, exunifs, exattrs) {
-    var ret = {};
+  function createEffectProgram(vtxsrc: any, frgsrc: any, exunifs: any, exattrs: any) {
+    var ret = {} as any;
     var unifs = ['uResolution', 'uSrc', 'uDelta'];
     if (exunifs) {
       unifs = unifs.concat(exunifs);
@@ -736,7 +736,7 @@ onMounted(() => {
   // drawEffect()
   // unuseEffect(prog)
   // TEXTURE0 makes src
-  function useEffect(fxobj, srctex) {
+  function useEffect(fxobj: any, srctex: any) {
     var prog = fxobj.program;
     useShader(prog);
     gl.uniform3fv(prog.uniforms.uResolution, renderSpec.array);
@@ -747,41 +747,41 @@ onMounted(() => {
       gl.bindTexture(gl.TEXTURE_2D, srctex.texture);
     }
   }
-  function drawEffect(fxobj) {
+  function drawEffect(fxobj: any) {
     gl.bindBuffer(gl.ARRAY_BUFFER, fxobj.buffer);
     gl.vertexAttribPointer(fxobj.program.attributes.aPosition, 2, gl.FLOAT, false, 0, 0);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }
-  function unuseEffect(fxobj) {
+  function unuseEffect(fxobj: any) {
     unuseShader(fxobj.program);
   }
-  var effectLib = {};
-  function createEffectLib() {
+  var effectLib = {} as any;
+  function createEffectLib(): void {
     var vtxsrc, frgsrc;
     //common
-    var cmnvtxsrc = document.getElementById("fx_common_vsh").getAttribute('data-gl');
+    var cmnvtxsrc = document.getElementById("fx_common_vsh")?.getAttribute('data-gl');
     //background
-    frgsrc = document.getElementById("bg_fsh").getAttribute('data-gl');
+    frgsrc = document.getElementById("bg_fsh")?.getAttribute('data-gl');
     effectLib.sceneBg = createEffectProgram(cmnvtxsrc, frgsrc, ['uTimes'], null);
     // make brightpixels buffer
-    frgsrc = document.getElementById("fx_brightbuf_fsh").getAttribute('data-gl');
+    frgsrc = document.getElementById("fx_brightbuf_fsh")?.getAttribute('data-gl');
     effectLib.mkBrightBuf = createEffectProgram(cmnvtxsrc, frgsrc, null, null);
     // direction blur
-    frgsrc = document.getElementById("fx_dirblur_r4_fsh").getAttribute('data-gl');
+    frgsrc = document.getElementById("fx_dirblur_r4_fsh")?.getAttribute('data-gl');
     effectLib.dirBlur = createEffectProgram(cmnvtxsrc, frgsrc, ['uBlurDir'], null);
     //final composite
-    vtxsrc = document.getElementById("pp_final_vsh").getAttribute('data-gl');
-    frgsrc = document.getElementById("pp_final_fsh").getAttribute('data-gl');
+    vtxsrc = document.getElementById("pp_final_vsh")?.getAttribute('data-gl');
+    frgsrc = document.getElementById("pp_final_fsh")?.getAttribute('data-gl');
     effectLib.finalComp = createEffectProgram(vtxsrc, frgsrc, ['uBloom'], null);
   }
   // background
-  function createBackground() {
+  function createBackground(): void {
     //console.log("create background");
   }
-  function initBackground() {
+  function initBackground(): void {
     //console.log("init background");
   }
-  function renderBackground() {
+  function renderBackground(): void {
     gl.disable(gl.DEPTH_TEST);
     useEffect(effectLib.sceneBg, null);
     gl.uniform2f(effectLib.sceneBg.program.uniforms.uTimes, timeInfo.elapsed, timeInfo.delta);
@@ -791,16 +791,16 @@ onMounted(() => {
   }
   // post process
   // var postProcess = {};
-  function createPostProcess() {
+  function createPostProcess(): void {
     //console.log("create post process");
   }
-  function initPostProcess() {
+  function initPostProcess(): void {
     //console.log("init post process");
   }
-  function renderPostProcess() {
+  function renderPostProcess(): void {
     // gl.enable(gl.TEXTURE_2D);
     gl.disable(gl.DEPTH_TEST);
-    var bindRT = function (rt, isclear) {
+    var bindRT = function (rt: any, isclear: boolean) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, rt.frameBuffer);
       gl.viewport(0, 0, rt.width, rt.height);
       if (isclear) {
@@ -841,14 +841,14 @@ onMounted(() => {
     gl.enable(gl.DEPTH_TEST);
   }
   // var SceneEnv = {};
-  function createScene() {
+  function createScene(): void {
     createEffectLib();
     createBackground();
     createPointFlowers();
     createPostProcess();
     sceneStandBy = true;
   }
-  function initScene() {
+  function initScene(): void {
     initBackground();
     initPointFlowers();
     initPostProcess();
@@ -857,7 +857,7 @@ onMounted(() => {
     projection.angle = Math.atan2(pointFlower.area.y, camera.position.z + pointFlower.area.z) * 180.0 / Math.PI * 2.0;
     Matrix44.loadProjection(projection.matrix, renderSpec.aspect, projection.angle, projection.nearfar[0], projection.nearfar[1]);
   }
-  function renderScene() {
+  function renderScene(): void {
     //draw
     Matrix44.loadLookAt(camera.matrix, camera.position, camera.lookat, camera.up);
     gl.enable(gl.DEPTH_TEST);
@@ -870,18 +870,18 @@ onMounted(() => {
     renderPointFlowers();
     renderPostProcess();
   }
-  function onResize() {
+  function onResize(): void {
     makeCanvasFullScreen(document.getElementById("sakura"));
     setViewports();
     if (sceneStandBy) {
       initScene();
     }
   }
-  function setViewports() {
+  function setViewports(): void {
     renderSpec.setSize(gl.canvas.width, gl.canvas.height);
     gl.clearColor(0.2, 0.2, 0.5, 1.0);
     gl.viewport(0, 0, renderSpec.width, renderSpec.height);
-    var rtfunc = function (rtname, rtw, rth) {
+    var rtfunc = function (rtname: string, rtw: number, rth: number) {
       var rt = renderSpec[rtname];
       if (rt) deleteRenderTarget(rt);
       renderSpec[rtname] = createRenderTarget(rtw, rth);
@@ -892,7 +892,7 @@ onMounted(() => {
     rtfunc('wHalfRT0', renderSpec.halfWidth, renderSpec.halfHeight);
     rtfunc('wHalfRT1', renderSpec.halfWidth, renderSpec.halfHeight);
   }
-  function render() {
+  function render(): void {
     renderScene();
   }
   var animating = true;
@@ -908,13 +908,13 @@ onMounted(() => {
   // }
   function animate() {
     var curdate = new Date();
-    timeInfo.elapsed = (curdate - timeInfo.start) / 1000.0;
-    timeInfo.delta = (curdate - timeInfo.prev) / 1000.0;
-    timeInfo.prev = curdate;
+    timeInfo.elapsed = (curdate.getTime() - timeInfo.start) / 1000.0;
+    timeInfo.delta = (curdate.getTime() - timeInfo.prev) / 1000.0;
+    timeInfo.prev = curdate.getTime();
     if (animating) requestAnimationFrame(animate);
     render();
   }
-  function makeCanvasFullScreen(canvas) {
+  function makeCanvasFullScreen(canvas: any) {
     var b = document.body;
     var d = document.documentElement;
     let fullw = Math.max(b.clientWidth, b.scrollWidth, d.scrollWidth, d.clientWidth);
@@ -923,10 +923,10 @@ onMounted(() => {
     canvas.height = fullh;
   }
   // window.addEventListener('load', function () {
-    var canvas = document.getElementById("sakura");
+  var canvas = document.getElementById("sakura") as HTMLCanvasElement;
     try {
       makeCanvasFullScreen(canvas);
-      gl = canvas.getContext('experimental-webgl');
+      gl = canvas.getContext('experimental-webgl') as WebGLRenderingContext;
     } catch (e) {
       alert("WebGL not supported." + e);
       return;
@@ -935,13 +935,13 @@ onMounted(() => {
     setViewports();
     createScene();
     initScene();
-    timeInfo.start = new Date();
+    timeInfo.start = Date.now() as number;
     timeInfo.prev = timeInfo.start;
     animate();
   // });
   //set window.requestAnimationFrame
-  (function (w, r) {
-    w['r' + r] = w['r' + r] || w['webkitR' + r] || w['mozR' + r] || w['msR' + r] || w['oR' + r] || function (c) { w.setTimeout(c, 1000 / 60); };
+  (function (w: any, r: string) {
+    w['r' + r] = w['r' + r] || w['webkitR' + r] || w['mozR' + r] || w['msR' + r] || w['oR' + r] || function (c: any) { w.setTimeout(c, 1000 / 60); };
   })(window, 'equestAnimationFrame');
 })
 </script>

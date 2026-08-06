@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElLoading } from 'element-plus';
 
 /* TypeScript 类型定义 */
 interface AxiosConfig {
@@ -55,7 +55,12 @@ function handleBusinessError(code: string, message: string) {
   const errorMessage = errorMap[code] || message || '未知错误';
   ElMessage.error(errorMessage)
 }
-
+/* 显示加载中 */
+const showLoading = ElLoading.service({
+  lock: true,
+  text: 'Loading',
+  background: 'rgba(0, 0, 0, 0.7)',
+});
 /* 并发控制器实现 */
 class ConcurrencyController {
   constructor(maxConcurrent = 5) {
@@ -66,13 +71,13 @@ class ConcurrencyController {
   }
   
   // 执行请求
-  async execute(requestFn) {
+  async execute(requestFn: () => Promise<any>) {
     return new Promise((resolve, reject) => {
       this.queue.push({ requestFn, resolve, reject });
       this.processQueue(); });
     }
     // 处理队列
-    async processQueue() {
+    async processQueue(): Promise<void> {
       if (this.currentCount >= this.maxConcurrent || this.queue.length === 0) {
         return;
       }
@@ -80,7 +85,7 @@ class ConcurrencyController {
       // 增加loading计数
       this.loadingCount++;
       if (this.loadingCount === 1) {
-        showLoading();
+        showLoading.close();
       }
       const { requestFn, resolve, reject } = this.queue.shift();
       try {
@@ -92,7 +97,7 @@ class ConcurrencyController {
         // 减少loading计数
         this.loadingCount--;
         if (this.loadingCount === 0) {
-          hideLoading();
+          showLoading.close();
         }
         // 继续处理队列
         this.processQueue();
@@ -150,32 +155,28 @@ axiosInstance.interceptors.response.use(
     if (response) {
       // 处理HTTP错误状态码
       switch (response.status) {
-        case 401:
-          // 未授权，跳转到登录页
-          redirectToLogin();
-          break;
         case 403:
           // 权限不足
-          showErrorMessage('权限不足');
+          ElMessage.error('权限不足');
           break;
         case 404:
           // 资源不存在
-          showErrorMessage('请求的资源不存在');
+          ElMessage.error('请求的资源不存在');
           break;
         case 500:
           // 服务器错误
-          showErrorMessage('服务器内部错误');
+          ElMessage.error('服务器内部错误');
           break;
         default:
           // 其他错误
-          showErrorMessage(`请求失败: ${response.status}`);
+          ElMessage.error(`请求失败: ${response.status}`);
       }
     } else if (error.message === 'canceled') {
       // 请求被取消
       console.log('请求被取消');
     } else {
       // 网络错误
-      showErrorMessage('网络错误，请检查网络连接');
+      ElMessage.error('网络错误，请检查网络连接');
     }
     return Promise.reject(error);
   });
@@ -185,7 +186,7 @@ axiosInstance.interceptors.response.use(
 // 基础请求方法
 async function request(config:any) {
   // 使用并发控制器执行请求
-  return concurrencyController.execute(() => {
+  return ConcurrencyController.execute(() => {
     return axiosInstance(config);
   });
 }

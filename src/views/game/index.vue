@@ -24,11 +24,11 @@ const gameTypes = ref([
     name: 'SevenStar',
     component: markRaw(SevenStar)
   },
-  {
-    label: '排列三/五',
-    name: 'Plw',
-    component: markRaw(Plw)
-  },
+  // {
+  //   label: '排列三/五',
+  //   name: 'Plw',
+  //   component: markRaw(Plw)
+  // },
   {
     label: '计算',
     name: 'Calc',

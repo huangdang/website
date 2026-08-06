@@ -54,10 +54,15 @@ const allDone = computed({
 const addTodo = () => {
   const text = inputText.value.trim()
   if (!text) return
-  const reg = /\[\s*([\d\s,]+?)\s*\]/;
+  // const reg = /\[\s*([\d\s,]+?)\s*\]/;
+  const reg = /\[([\d.,]+)\]/;
   const res = text.match(reg)?.[1]?.replace(/\s/g, '').split(',').map(Number);
+  console.log('text.match(reg)', text.match(reg))
+  console.log('1111', text.match(reg)?.[1]?.replace(/\s/g, ''))
+  console.log('2222', text.match(reg)?.[1]?.replace(/\s/g, '').split(','))
+  console.log('3333', text.match(reg)?.[1]?.replace(/\s/g, '').split(',').map(Number))
 
-  const match = /\[([\d,]+)\]/;
+  const match = /\[([\d]+)\]/;
   todos.value.unshift({
     id: Date.now(),
     text: text?.replace(match, ''),
@@ -65,6 +70,10 @@ const addTodo = () => {
     price: res||[0]
   })
   inputText.value = ''
+}
+
+const itemText = (item: any) => {
+  return item.text?.replace(/\[([\d.,]+)\]/, '')
 }
 
 // 删除待办
@@ -81,7 +90,8 @@ const editInputRef = ref<HTMLInputElement>()
 const startEdit = (item: TodoItem) => {
   if (item.done) return
   editingId.value = item.id
-  editingText.value = item.text
+  editingText.value = `${item.text}${JSON.stringify(item.price)}`
+  console.log('==', editingText.value)
   nextTick(() => {
     editInputRef.value?.focus()
   })
@@ -91,8 +101,17 @@ const startEdit = (item: TodoItem) => {
 const saveEdit = (item: TodoItem) => {
   if (editingId.value !== item.id) return
   const text = editingText.value.trim()
+  console.log('==1', text)
   if (text) {
-    item.text = text
+
+    const reg = /\[([\d.,]+)\]/ ///\[\s*([\d\s,]+?)\s*\]/;
+    const res = text.match(reg)?.[1]?.replace(/\s/g, '').split(',').map(Number);
+
+    const match = /\[([\d.,]+)\]/;
+    item.text = text?.replace(match, '')
+    item.price = res || [0]
+
+    // item.text = text || ''
     editingId.value = null
   } else {
     // 内容为空则删除该待办
@@ -173,7 +192,7 @@ const clearCompleted = () => {
             :class="{ 'is-editable': !item.done }"
             @dblclick="startEdit(item)"
           >
-            {{ item.text }}
+            {{ itemText(item) }}
             <span style="color: red;">{{ itemPriceTotal(item.price) }}元</span>
           </div>
           
