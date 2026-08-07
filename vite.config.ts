@@ -32,7 +32,7 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/seven/, '')
       },
-      '/double': {
+      '/api': {
         target: 'https://www.cwl.gov.cn',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/double/, '')

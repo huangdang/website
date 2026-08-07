@@ -26,7 +26,7 @@ const initData = () => {
 const getSsq = () => {
    axios({
       method: 'get',
-      url: '/double/cwl_admin/front/cwlkj/search/kjxx/findDrawNotice?name=ssq&issueCount=&issueStart=&issueEnd=&dayStart=&dayEnd=&pageNo=1&pageSize=30&week=&systemType=PC'
+      url: 'https://www.cwl.gov.cn/cwl_admin/front/cwlkj/search/kjxx/findDrawNotice?name=ssq&issueCount=&issueStart=&issueEnd=&dayStart=&dayEnd=&pageNo=1&pageSize=30&week=&systemType=PC'
     }).then(res => {
       result.value = res.data.result.map((item:any) => ({
         ...item,
