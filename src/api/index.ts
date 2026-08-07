@@ -63,6 +63,11 @@ const showLoading = ElLoading.service({
 });
 /* 并发控制器实现 */
 class ConcurrencyController {
+  [x: string]: any;
+  maxConcurrent: number;
+  currentCount: number;
+  queue: any[];
+  loadingCount: number;
   constructor(maxConcurrent = 5) {
     this.maxConcurrent = maxConcurrent;
     this.currentCount = 0;
@@ -70,7 +75,7 @@ class ConcurrencyController {
     this.loadingCount = 0;
   }
   
-  // 执行请求
+  // 执行请求 execute
   async execute(requestFn: () => Promise<any>) {
     return new Promise((resolve, reject) => {
       this.queue.push({ requestFn, resolve, reject });
@@ -104,7 +109,7 @@ class ConcurrencyController {
       }
     }
     // 更新并发阈值
-    updateMaxConcurrent(newMax) {
+    updateMaxConcurrent(newMax: number) {
       this.maxConcurrent = newMax;
       this.processQueue();
     }
@@ -119,7 +124,7 @@ const axiosInstance = axios.create({
   }
 });
 // 请求拦截器
-axiosInstance.interceptors.request.use(config => {
+axiosInstance.interceptors.request.use((config:any) => {
   // 添加token
   const token = localStorage.getItem('token');
   if (token) {
@@ -135,9 +140,9 @@ axiosInstance.interceptors.request.use(config => {
 });
 // 响应拦截器
 axiosInstance.interceptors.response.use(
-  response => {
+  (response: any) => {
     // 计算请求耗时
-    const endTime = new Date();
+    const endTime = new Date() as any;
     const duration = endTime - response.config.metadata.startTime;
     // 处理业务错误码
     if (response.data && typeof response.data === 'object' && 'code' in response.data) {
@@ -186,7 +191,7 @@ axiosInstance.interceptors.response.use(
 // 基础请求方法
 async function request(config:any) {
   // 使用并发控制器执行请求
-  return ConcurrencyController.execute(() => {
+  return new ConcurrencyController().execute(() => {
     return axiosInstance(config);
   });
 }
@@ -229,7 +234,7 @@ async function download(url:string, params = {}, filename = '', config = {}) {
     params,
     responseType: 'blob',
     ...config
-  }).then(response => {
+  }).then((response: any) => {
     // 创建下载链接
     const blob = new Blob([response.data]);
     const downloadUrl = window.URL.createObjectURL(blob);

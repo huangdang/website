@@ -11,12 +11,12 @@ const startTerm = ref<string>('') // 开始期号
 const endTerm = ref<string>('') // 结束期号
 const gameNo = ref<string>('04') // 游戏
 const pageSize = ref<number>(10) // 条数
-const searchLog = ref([]) // 搜索记录
+const searchLog = ref<any[]>([]) // 搜索记录
 const searchVal = ref<string>('') // 搜索记录
 const totalNum = ref<number>(4) // 总数量
 const currentPage = ref(1) // 当前页码
 const pageTotal = ref(0) // 总页码
-const code = ref([]) // 表格
+const code = ref<any[]>([]) // 表格
 const columns = ref([]) // 表格列
 const randomNumStr = ref<any>([])
 interface DomList {
@@ -105,6 +105,7 @@ const getQry = (num: string) => {
     code.value = []
     gameNoType.value = gameNo.value
   }
+  // www.lottery.gov.cn
   axios.get(`https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=${gameNo.value}&provinceId=0&pageSize=${pageSize.value}&isVerify=1&pageNo=${num}`).then(res => {
     const data:any = res.data.value.list.map((item: any) => ({
         ...item,
@@ -133,7 +134,7 @@ const queryNum = (val: string) => {
   }
   let inpLen: number[] | string[] = [];
   let reg: RegExp;
-  let res: string[];
+  let res: any[];
   console.log(val.substring(0,5).split(''), '##########')
   if (val.length >= 8 ) {
     inpLen = val.substring(0,5).split('')
@@ -148,7 +149,7 @@ const queryNum = (val: string) => {
     allGet(inpLen,res)
     for (let j = 0; j < inpLen.length; j++) {
       if (inpLen[j] == res[j]) {
-        reg = new RegExp(inpLen[j])
+        reg = new RegExp(inpLen[j] as string)
         res[j] = res[j].replace(reg, `<span style="color: red">${inpLen[j]}</span>`)
       }
     }

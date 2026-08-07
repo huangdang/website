@@ -481,7 +481,7 @@ onMounted(() => {
   var pointFlower = {} as any;
   // var meshFlower = {};
   var sceneStandBy = false;
-  var BlossomParticle = function (): any {
+  var BlossomParticle = function (this: any): any {
     this.velocity = new Array(3);
     this.rotation = new Array(3);
     this.position = new Array(3);
@@ -550,7 +550,8 @@ onMounted(() => {
 
     unuseShader(pointFlower.program);
     for (var i = 0; i < pointFlower.numFlowers; i++) {
-      pointFlower.particles[i] = new BlossomParticle();
+      // pointFlower.particles[i] = new BlossomParticle();
+      pointFlower.particles[i] = new (BlossomParticle as any)()
     }
   }
   function initPointFlowers(): void {

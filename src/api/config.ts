@@ -1,3 +1,4 @@
+import { ElMessage, ElLoading } from 'element-plus';
 /* TypeScript 类型定义 */
 interface AxiosConfig {
   baseURL?: string;
@@ -16,7 +17,7 @@ interface RequestConfig extends AxiosConfig {
   params?: any;
   skipErrorHandler?: boolean;
   skipLoading?: boolean;
-  cancelToken?: CancelToken;
+  cancelToken?: any;
 }
 interface ResponseData<T = any> {
   code: number;
@@ -50,11 +51,22 @@ function handleBusinessError(code: string, message: string) {
     1007: '系统繁忙'
   };
   const errorMessage = errorMap[code] || message || '未知错误';
-  showErrorMessage(errorMessage)
+  ElMessage.error(errorMessage);
 }
+
+const showLoading = ElLoading.service({
+  lock: true,
+  text: 'Loading...',
+  spinner: 'el-icon-loading',
+  background: 'rgba(0, 0, 0, 0.7)'
+});
 
 /* 并发控制器实现 */
 class ConcurrencyController {
+  maxConcurrent: number;
+  currentCount: number;
+  queue: any[];
+  loadingCount: number;
   constructor(maxConcurrent = 5) {
     this.maxConcurrent = maxConcurrent;
     this.currentCount = 0;
@@ -63,7 +75,7 @@ class ConcurrencyController {
   }
   
   // 执行请求
-  async execute(requestFn) {
+  async execute(requestFn: () => Promise<any>): Promise<any> {
     return new Promise((resolve, reject) => {
       this.queue.push({ requestFn, resolve, reject });
       this.processQueue(); });
@@ -77,7 +89,7 @@ class ConcurrencyController {
       // 增加loading计数
       this.loadingCount++;
       if (this.loadingCount === 1) {
-        showLoading();
+        showLoading.close();
       }
       const { requestFn, resolve, reject } = this.queue.shift();
       try {
@@ -89,14 +101,14 @@ class ConcurrencyController {
         // 减少loading计数
         this.loadingCount--;
         if (this.loadingCount === 0) {
-          hideLoading();
+          showLoading.close();
         }
         // 继续处理队列
         this.processQueue();
       }
     }
     // 更新并发阈值
-    updateMaxConcurrent(newMax) {
+    updateMaxConcurrent(newMax: number) {
       this.maxConcurrent = newMax;
       this.processQueue();
     }

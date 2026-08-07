@@ -2,13 +2,13 @@
 import { ref, onMounted, watch } from 'vue'
 import axios from 'axios'
 const gameNo = ref('1')
-const log = ref([])
-const result = ref([])
+const log = ref<any[]>([])
+const result = ref<any[]>([])
 const before = ref('')
 const after = ref('')
 onMounted(() => {
   if (localStorage.getItem('pair-lotto')) {
-    log.value = JSON.parse(localStorage.getItem('pair-lotto'))
+    log.value = JSON.parse(localStorage.getItem('pair-lotto') as string)
   }
   initData()
 })
