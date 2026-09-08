@@ -6,6 +6,9 @@ const log = ref<any[]>([])
 const result = ref<any[]>([])
 const before = ref('')
 const after = ref('')
+// const total = ref(0)
+const pageSize = ref(10)
+const currentPage = ref(1)
 onMounted(() => {
   if (localStorage.getItem('pair-lotto')) {
     log.value = JSON.parse(localStorage.getItem('pair-lotto') as string)
@@ -16,8 +19,14 @@ watch(() => gameNo.value, (val) => {
   gameNo.value = val as string
   if (val === '1') {
     getSsq()
+    currentPage.value = 1
+    // total.value = 0
+    result.value = []
   } else if (val === '2') {
     dlt()
+    currentPage.value = 1
+    // total.value = 0
+    result.value = []
   }
 })
 const initData = () => {
@@ -26,21 +35,23 @@ const initData = () => {
 const getSsq = () => {
    axios({
       method: 'get',
-      url: 'https://www.cwl.gov.cn/cwl_admin/front/cwlkj/search/kjxx/findDrawNotice?name=ssq&issueCount=&issueStart=&issueEnd=&dayStart=&dayEnd=&pageNo=1&pageSize=30&week=&systemType=PC'
+      url: `/api/cwl_admin/front/cwlkj/search/kjxx/findDrawNotice?name=ssq&issueCount=&issueStart=&issueEnd=&dayStart=&dayEnd=&pageNo=${currentPage.value}&pageSize=${pageSize.value}&week=&systemType=PC`
     }).then(res => {
-      result.value = res.data.result.map((item:any) => ({
+      // total.value = res.data.total
+      result.value = result.value.concat(res.data.result.map((item:any) => ({
         ...item,
         redBlue: `${item.red.replace(/,/g,' ')} ${item.blue}`,
         before: item.red.split(','),
         after: item.blue.split(','),
         zjCode: ''
-      })) || []
+      }))) || []
     })
 }
 const dlt = () => {
-  axios.get(`https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=85&provinceId=0&pageSize=100&isVerify=1&pageNo=1`).then(res => {
+  axios.get(`https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=85&provinceId=0&pageSize=${pageSize.value}&isVerify=1&pageNo=${currentPage.value}`).then(res => {
     if (res.data.success) {
-      result.value = res.data.value.list.map((item:any) => ({
+      // total.value = res.data.value.total
+      result.value = result.value.concat(res.data.value.list.map((item:any) => ({
         ...item,
         code: item.lotteryDrawNum,
         date: item.lotteryDrawTime,
@@ -48,9 +59,18 @@ const dlt = () => {
         before: item.lotteryDrawResult.split(' ').splice(0, 5),
         after: item.lotteryDrawResult.split(' ').splice(5),
         zjCode: ''
-      })) || []
+      }))) || []
     }
   })
+}
+
+const loadMore = () => {
+  currentPage.value++
+  if (gameNo.value === '1') {
+    getSsq()
+  } else if (gameNo.value === '2') {
+    dlt()
+  }
 }
 
 const queryNumber = (before: string, after: string) => {
@@ -143,6 +163,15 @@ const saveLog = () => {
         label="开奖日期"
       ></el-table-column>
     </el-table>
+    <div class="page">
+      <!-- <el-pagination
+        background
+        layout="prev, pager, next"
+        :total="total">
+      </el-pagination> -->
+      <el-button type="primary" @click="loadMore">加载更多</el-button>
+    </div>
+    
   </div>
 </template>
 <style lang="scss" scoped>

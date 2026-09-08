@@ -35,7 +35,7 @@ export default defineConfig({
       '/api': {
         target: 'https://www.cwl.gov.cn',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/double/, '')
+        rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
   }

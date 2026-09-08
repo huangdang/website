@@ -13,16 +13,18 @@ type FilterType = 'all' | 'active' | 'completed'
 const inputText = ref('')
 const filter = ref<FilterType>('all')
 const todos = ref<TodoItem[]>([
-  { id: 1, text: '04号 中信银行', price: [1999.41], done: false },
-  { id: 2, text: '07号 金条', price: [821.98, 43.26], done: false },
+  { id: 1, text: '04号 中信银行', price: [], done: false },
+  { id: 2, text: '07号 金条', price: [], done: false },
   { id: 3, text: '10号 小鹏汽车', price: [2974.31], done: false },
-  { id: 4, text: '10号 白条', price: [167.59], done: false },
+  { id: 4, text: '10号 白条', price: [], done: false },
+  { id: 11, text: '12号 滴滴', price: [], done: false },
   { id: 5, text: '13号 微粒贷', price: [1280.94], done: false },
   { id: 6, text: '13号 交通银行惠民贷', price: [433.80,369.19,1752.71], done: false },
   { id: 7, text: '14号 借呗', price: [7640.74], done: false },
-  { id: 8, text: '20号 花呗', price: [268.94], done: false },
-  { id: 9, text: '24号 招商银行', price: [272.30,1723.06], done: false },
-  { id: 10, text: '30号 金条', price: [14598.25], done: false }
+  { id: 12, text: '14号 抖音', price: [816.54], done: false },
+  { id: 8, text: '20号 花呗', price: [862.24], done: false },
+  { id: 9, text: '24号 招商银行', price: [222.8,1723.06], done: false },
+  { id: 10, text: '30号 金条', price: [13202,1396.25], done: false }
 ])
 
 // 过滤后的列表
