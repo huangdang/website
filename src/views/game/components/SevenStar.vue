@@ -303,13 +303,20 @@ const loadMore = () => {
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
-        :page-sizes="[10, 100, 200, 500, 1000]" :page-size="pageSize" layout="sizes" :total="pageTotal"
-        style="text-align: center;margin-top: 15px;" />
+      <div class="footer">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[10, 100, 200, 500, 1000]"
+          :page-size="pageSize"
+          layout="sizes"
+          :total="pageTotal"
+          style="text-align: center;margin-top: 15px;"
+        />
 
-      <!-- 加载更多 -->
-      <div class="more" @click="loadMore">
-        <span>加载更多</span>
+        <!-- 加载更多 -->
+        <span @click="loadMore">加载更多</span>
       </div>
     </div>
   </div>
@@ -438,5 +445,9 @@ const loadMore = () => {
       margin: -1px;
     }
   }
+}
+.footer {
+  text-align: center;
+  margin-top: 15px;
 }
 </style>

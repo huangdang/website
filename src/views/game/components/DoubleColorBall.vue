@@ -169,10 +169,15 @@ const saveLog = () => {
         layout="prev, pager, next"
         :total="total">
       </el-pagination> -->
-      <el-button type="primary" @click="loadMore">加载更多</el-button>
+      <div class="load-more" @click="loadMore">加载更多</div>
     </div>
     
   </div>
 </template>
 <style lang="scss" scoped>
+.page{
+  text-align: center;
+  margin-top: 20px;
+  cursor: pointer;
+}
 </style>
